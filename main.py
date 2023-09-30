@@ -3,20 +3,9 @@ from fastapi import FastAPI, HTTPException
 from expertApi.expertApiWrapper import ExpertAPIWrapper
 from pydantic import BaseModel
 
-
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-
-@app.get("/expertStores")
+@app.get("/getAllExpertStores")
 def get_expert_stores():
     wrapper = ExpertAPIWrapper()
     try:
@@ -25,7 +14,7 @@ def get_expert_stores():
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@app.post("/getArticle")
+@app.post("/getArticleByWebcode")
 class ArticleNumberRequest(BaseModel):
     article_nr: int
 def get_article(request: ArticleNumberRequest):
@@ -36,7 +25,7 @@ def get_article(request: ArticleNumberRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@app.post("/productInfo")
+@app.post("/getArticleData")
 class ProductInfoRequest(BaseModel):
     store_id: str
     store_name: str

@@ -1,4 +1,4 @@
-# cURLsolverrManager
+# cURLsolverr
 
 ## Introduction
 

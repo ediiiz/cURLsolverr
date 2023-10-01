@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  curlsolverr:
+    image: ed1zx/curlsolverr:latest
+    ports:
+      - "8000:8000" # Map port 8000 of the container to port 8000 on the host
+    restart: unless-stopped # Automatically restart the container if it crashes

@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main  # or use master if you're on the older default branch
+    paths-ignore:
+      - 'README.md'
+      - '.github/workflows/docker-image.yml'
+      - '.gitignore'
+      - 'docker-compose.yml'
 
 jobs:
   build:
@@ -23,4 +28,3 @@ jobs:
         run: |
           docker build -t ed1zx/curlsolverr:latest .
           docker push ed1zx/curlsolverr:latest
-

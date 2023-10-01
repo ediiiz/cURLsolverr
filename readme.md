@@ -1,19 +1,58 @@
-# cURLsolverrManager
+# cURLsolverr
 
 ## Introduction
 
-The `cURLsolverrManager` is a FastAPI application designed to create and manage `SimpleSession` objects, which are essentially HTTP sessions with extended functionalities. The manager allows users to make GET and POST requests using created sessions, which can optionally be configured with a proxy. 
+The `cURLsolverrManager` is a FastAPI application designed to create and manage HTTP sessions based on curl-impersonate (curl_cffi) with extended functionalities. The manager allows users to make GET and POST requests using created sessions, which can optionally be configured with a proxy. The manager also allows users to delete sessions and get a list of all active sessions.
 
-## How to Use
 
-### 1. Starting the FastAPI application:
+## Installation using Docker
+
+The application can also be run using Docker. Here's how to set it up and run it with Docker Compose.
+
+### 1. Pulling the Docker Image:
+
+To get the Docker image of `cURLsolverrManager` from Docker Hub:
 
 ```bash
-uvicorn filename:app --reload
+docker pull ed1zx/curlsolverr:latest
 ```
-Replace `filename` with the name of the python file containing the FastAPI application.
 
-### 2. Creating a new session:
+### 2. Running with Docker Compose:
+
+You can use Docker Compose to manage the application container. Here's a basic `docker-compose.yml` file for the service:
+
+```yaml
+version: '3'
+
+services:
+  curlsolverr:
+    image: ed1zx/curlsolverr:latest
+    ports:
+      - "8000:8000"
+```
+
+With the above `docker-compose.yml` file, you can start the application using:
+
+```bash
+docker-compose up
+```
+
+This will start the `cURLsolverrManager` application and bind it to port 8000 on your host machine. You can access the application by navigating to `http://localhost:8000` in your browser or using any API client.
+
+
+### 3. Accessing the Swagger UI:
+
+Once the application is running, you can access the Swagger UI at:
+
+```
+http://localhost:8000/docs
+```
+
+The Swagger UI provides a user-friendly interface to interact with the API, view its documentation, and test out its endpoints.
+
+## Usage
+
+### 1. Creating a new session:
 
 To create a new session, you can make a POST request:
 
@@ -33,7 +72,7 @@ const data = await response.json();
 console.log(data);  // Expected output: { "session": "generated_session_id" }
 ```
 
-### 3. Making a GET request:
+### 2. Making a GET request:
 
 To make a GET request using a session:
 
@@ -74,7 +113,7 @@ console.log(data);
 }
 ```
 
-### 4. Making a POST request:
+### 3. Making a POST request:
 
 To make a POST request using a session:
 
@@ -116,7 +155,7 @@ console.log(data);
 }
 ```
 
-### 5. Deleting a session:
+### 4. Deleting a session:
 
 To delete a session:
 
@@ -128,7 +167,7 @@ const data = await response.json();
 console.log(data);  // Expected output: { "status": "ok" }
 ```
 
-### 6. Listing all sessions:
+### 5. Listing all sessions:
 
 To get a list of all active sessions:
 

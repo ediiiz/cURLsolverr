@@ -57,8 +57,10 @@ const response = await fetch("/v1/session/", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
+    impersonate: "chrome110", // check :8000/docs ImpersonateSchema
     proxy: {  // Optional
-      url: "http://your_proxy_url",
+      protocol: "http",  // or "https" or "socks5" or "socks4"
+      url: "your_proxy_url", // or "your_proxy_ip:your_proxy_port"
       username: "your_username",  // Optional
       password: "your_password"  // Optional
     }

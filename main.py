@@ -57,8 +57,8 @@ class SessionCreateRequest(BaseModel):
 
 class SessionData:
     session: SimpleSession
-    cookies: Optional[Dict[str, Any]]
-    proxy: Optional[Proxy]
+    cookies: Optional[Dict[str, Any]] = None
+    proxy: Optional[Proxy] = None
 
 
 class SessionDestroyRequest(BaseModel):
@@ -175,7 +175,7 @@ curlManager = cURLsolverrManager()
 
 
 @app.post("/v1/session/")
-def create_session(request: Optional[SessionCreateRequest] = None):
+def create_session(request: SessionCreateRequest):
     session_id = None
     proxy = None
     impersonate = None

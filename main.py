@@ -1,3 +1,4 @@
+from enum import Enum
 from fastapi import FastAPI
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, HttpUrl
@@ -74,7 +75,7 @@ class cURLsolverrManager:
             "status": response.status_code,
             "headers": dict(response.headers),
             "cookies": dict(response.cookies),
-            "response": response.text
+            "response": response.content
         }
 
     def post_request(self, url: str, data: Dict[str, Any], session_id: Optional[str] = None, headers: Optional[Dict[str, str]] = None, **kwargs) -> Dict:
@@ -99,7 +100,7 @@ class cURLsolverrManager:
             "status": response.status_code,
             "headers": dict(response.headers),
             "cookies": dict(response.cookies),
-            "response": response.text
+            "response": response.content
         }
 
 
@@ -123,22 +124,21 @@ class SessionDestroyRequest(BaseModel):
     session: str
 
 
-class RequestGet(BaseModel):
+class HttpMethod(str, Enum):
+    GET = "GET"
+    POST = "POST"
+
+
+class Request(BaseModel):
+    method: HttpMethod
     url: HttpUrl
-    session: Optional[str] = None
-    session_ttl_minutes: Optional[int] = None
-    maxTimeout: Optional[int] = 60000
-    cookies: Optional[List[Dict[str, Any]]] = None
-    returnOnlyCookies: Optional[bool] = False
-    proxy: Optional[Proxy] = None
+    session: str
     headers: Optional[Dict[str, Any]] = None
-
-
-class RequestPost(RequestGet):
     postData: Optional[Dict[str, Any]] = None
+    returnOnlyCookies: Optional[bool] = False
 
 
-@app.post("/v1/sessions/")
+@app.post("/v1/session/")
 def create_session(request: Optional[SessionCreateRequest] = None):
     session_id = None
     proxy = None
@@ -150,30 +150,31 @@ def create_session(request: Optional[SessionCreateRequest] = None):
     return {"session": session_id}
 
 
-@app.get("/v1/sessions/")
+@app.get("/v1/session/")
 def list_sessions():
     return {"sessions": curlManager.list_sessions()}
 
 
-@app.delete("/v1/sessions/{session_id}")
+@app.delete("/v1/session/{session_id}")
 def destroy_session(session_id: str):
     curlManager.destroy_session(session_id)
     return {"status": "ok"}
 
 
-@app.get("/v1/request/")
-def make_get_request(request: RequestGet):
-    response = curlManager.get_request(
-        request.url, session_id=request.session)
-    if request.returnOnlyCookies:
-        return {"cookies": response["cookies"]}
-    return response
-
-
 @app.post("/v1/request/")
-def make_post_request(request: RequestPost):
-    response = curlManager.post_request(
-        request.url, data=request.postData, session_id=request.session)
+def make_get_or_post_request(request: Request):
+    method = request.method
+    response = None
+
+    switcher = {
+        HttpMethod.GET: lambda: curlManager.get_request(request.url, headers=request.headers, session_id=request.session),
+        HttpMethod.POST: lambda: curlManager.post_request(
+            request.url, data=request.postData, headers=request.headers, session_id=request.session)
+    }
+
+    func = switcher.get(method, lambda: {"error": "Invalid method"})
+    response = func()
+
     if request.returnOnlyCookies:
         return {"cookies": response["cookies"]}
     return response

@@ -145,7 +145,3 @@ For requests to `/v1/request/`, the following parameters are optional:
 - `proxy`: Proxy settings for the request. Contains URL, username (optional), and password (optional).
 
 For **session creation** (`/v1/session/`), the `proxy` parameter is optional.
-
---- 
-
-This README reflects the updated code structure and functionality you've shared. Adjustments can be made further based on specific requirements or further changes to the code.
